@@ -11,11 +11,10 @@ function App() {
   return (
     <div>
         <Switch>
-          {!authCtx.isLoggedIn && (
             <Route path="/" exact>
-              <Redirect to="/login" />
+              {!authCtx.isLoggedIn && <Redirect to="/login" />}
+              {authCtx.isLoggedIn && <Redirect to="/complete-profile"/>}
             </Route>
-          )}
           {!authCtx.isLoggedIn && (
             <Route path="/login">
               <SignUpPage />
