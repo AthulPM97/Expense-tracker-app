@@ -1,7 +1,11 @@
-import { useRef } from "react";
+import { useContext, useRef } from "react";
 import { Button, Container, Form, Col, Row, NavLink } from "react-bootstrap";
+import AuthContext from "../../store/auth-context";
 
 const Signup = (props) => {
+  
+  const authCtx = useContext(AuthContext);
+
   const emailRef = useRef();
   const passwordRef = useRef();
   const confirmPasswordRef = useRef();
@@ -41,7 +45,8 @@ const Signup = (props) => {
         if (response.ok) {
           const data = await response.json();
           console.log(data);
-          localStorage.setItem("token", JSON.stringify(data.idToken));
+          authCtx.login(data.idToken);
+          //localStorage.setItem("token", JSON.stringify(data.idToken));
           console.log("User has successfully signed up");
         }
       } catch (err) {

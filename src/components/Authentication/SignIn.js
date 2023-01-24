@@ -1,7 +1,11 @@
-import { useRef } from "react";
+import { useContext, useRef } from "react";
 import { Col, Container, Row, Form, Button, NavLink } from "react-bootstrap";
+import AuthContext from "../../store/auth-context";
 
 const SignIn = (props) => {
+
+  const authCtx = useContext(AuthContext);
+
   const emailRef = useRef();
   const passwordRef = useRef();
 
@@ -34,8 +38,7 @@ const SignIn = (props) => {
         if (response.ok) {
           const data = await response.json();
           console.log(data);
-          localStorage.setItem("token", JSON.stringify(data.idToken));
-          console.log("token store to local storage");
+          authCtx.login(data.idToken);
           console.log("User has successfully signed in");
         }
       } catch (err) {
