@@ -1,31 +1,24 @@
 import { useRef } from "react";
-import { Button, Container, Form, Col, Row, NavLink } from "react-bootstrap";
+import { Col, Container, Row, Form, Button, NavLink } from "react-bootstrap";
 
-const Signup = (props) => {
+const SignIn = (props) => {
   const emailRef = useRef();
   const passwordRef = useRef();
-  const confirmPasswordRef = useRef();
 
   const submitHandler = (event) => {
-    console.log("submitted");
     event.preventDefault();
     const enteredEmail = emailRef.current.value;
     const enteredPassword = passwordRef.current.value;
-    const confirmPassword = confirmPasswordRef.current.value;
     if (!enteredEmail.includes("@")) {
       alert("Enter a valid Email");
     }
     if (enteredPassword.length < 6) {
       alert("Enter a valid password");
     }
-    if (enteredPassword !== confirmPassword) {
-      alert("Passwords do not match!");
-    }
-
-    const signUp = async () => {
+    const signIn = async () => {
       try {
         const response = await fetch(
-          "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyATUydlpf9f4eZ4Y0yMpb2SqFFUwup6HoA",
+          "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyATUydlpf9f4eZ4Y0yMpb2SqFFUwup6HoA",
           {
             method: "POST",
             body: JSON.stringify({
@@ -42,20 +35,21 @@ const Signup = (props) => {
           const data = await response.json();
           console.log(data);
           localStorage.setItem("token", JSON.stringify(data.idToken));
-          console.log("User has successfully signed up");
+          console.log("token store to local storage");
+          console.log("User has successfully signed in");
         }
       } catch (err) {
         alert("Error: " + err.message);
       }
     };
 
-    signUp();
-  };
+    signIn();
+  }
 
   const modeChangeHandler = () => {
     props.changeMode();
   };
-  
+
   return (
     <Container
       className="d-flex align-items-center justify-content-center"
@@ -65,7 +59,7 @@ const Signup = (props) => {
         <Col xs={12}>
           <div className="p-3 bg-light rounded">
             <div className="text-center mb-3">
-              <h3>Sign Up</h3>
+              <h3>Login</h3>
             </div>
             <Form onSubmit={submitHandler}>
               <Form.Group controlId="email" className="mb-2">
@@ -84,26 +78,18 @@ const Signup = (props) => {
                 />
               </Form.Group>
 
-              <Form.Group controlId="confirmPassword" className="mb-3">
-                <Form.Control
-                  type="password"
-                  placeholder="Confirm Password"
-                  ref={confirmPasswordRef}
-                />
-              </Form.Group>
-
               <div className="text-center">
                 <Button variant="primary" type="submit">
-                  Sign Up
+                  Login
                 </Button>
               </div>
             </Form>
           </div>
         </Col>
-        <Container className="text-center"><NavLink onClick={modeChangeHandler}>already have an account? Sign In</NavLink></Container>
+        <Container className="text-center"><NavLink onClick={modeChangeHandler}>Don't have an account? Sign Up</NavLink></Container>
       </Row>
     </Container>
   );
 };
 
-export default Signup;
+export default SignIn;
