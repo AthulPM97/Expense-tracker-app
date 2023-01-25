@@ -1,9 +1,35 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Button, Container, Form } from "react-bootstrap";
 import ExpenseItem from "./ExpenseItem";
 
 const DailyExpenses = () => {
+
   const [expenses, setExpenses] = useState([]);
+
+  useEffect(() => {
+    const getExpenseData = async () => {
+      try{
+        const response = await fetch('https://expense-tracker-26c78-default-rtdb.firebaseio.com/expenses.json');
+        if(response.ok) {
+          const data = await response.json();
+          const keys = Object.keys(data);
+          keys.forEach(key => {
+            const expenseWithId = {
+              ...data[key],
+              id: key,
+            }
+            setExpenses((expense) => {
+              return [...expense, expenseWithId];
+            });
+            console.log(expenses);
+          });
+        }
+      }catch(err) {
+        alert(err.message);
+      }
+    }
+    getExpenseData();
+  }, []);
 
   const amountRef = useRef();
   const descriptionRef = useRef();
@@ -14,18 +40,45 @@ const DailyExpenses = () => {
     const enteredAmount = amountRef.current.value;
     const enteredDescription = descriptionRef.current.value;
     const enteredCategory = categoryRef.current.value;
-    const expenseData = {
-      amount: enteredAmount,
-      description: enteredDescription,
-      category: enteredCategory,
-    };
-    setExpenses(() => {
-      return [...expenses, expenseData];
-    });
+
+    const postExpenseData = async () => {
+      try{
+        const response = await fetch('https://expense-tracker-26c78-default-rtdb.firebaseio.com/expenses.json',
+        {
+          method: "POST",
+          body: JSON.stringify({
+            amount: enteredAmount,
+            description: enteredDescription,
+            category: enteredCategory,
+          }),
+          headers: {
+            "Content-Type":"application/JSON",
+          }
+        });
+        if(response.ok) {
+          const data = await response.json();
+          console.log(data);
+          const expenseData = {
+            id: data.name,
+            amount: enteredAmount,
+            description: enteredDescription,
+            category: enteredCategory,
+          };
+          setExpenses(() => {
+            return [...expenses, expenseData];
+          });
+        }
+      }catch(err) {
+        alert(err.message);
+      }
+    }
+    postExpenseData();
+    
   };
   const addedExpenses = expenses.map((expense) => {
+    console.log(expense);
     return (
-      <Container className="mt-3 mb-3 border">
+      <Container className="mt-3 mb-3 border" key={expense.id}>
         <ExpenseItem expense={expense} />
       </Container>
     );
