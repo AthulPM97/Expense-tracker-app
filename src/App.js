@@ -5,6 +5,7 @@ import CompleteProfile from "./Pages/CompleteProfile";
 import { useContext } from "react";
 import ProfileDetails from "./Pages/ProfileDetails";
 import Header from "./components/Header/Header";
+import ForgotPw from "./Pages/ForgotPw";
 
 function App() {
   const authCtx = useContext(AuthContext);
@@ -16,6 +17,9 @@ function App() {
             <Route path="/" exact>
               {!authCtx.isLoggedIn && <Redirect to="/login" />}
               {authCtx.isLoggedIn && <Redirect to="/complete-profile"/>}
+            </Route>
+            <Route path="/forgot-password" exact>
+              <ForgotPw />
             </Route>
           {!authCtx.isLoggedIn && (
             <Route path="/login">

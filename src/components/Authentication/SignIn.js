@@ -1,8 +1,11 @@
 import { useContext, useRef } from "react";
 import { Col, Container, Row, Form, Button, NavLink } from "react-bootstrap";
+import { useHistory } from "react-router-dom";
 import AuthContext from "../../store/auth-context";
 
 const SignIn = (props) => {
+
+  const history = useHistory();
 
   const authCtx = useContext(AuthContext);
 
@@ -49,6 +52,10 @@ const SignIn = (props) => {
     signIn();
   }
 
+  const forgotPasswordHandler = () => {
+    history.push('/forgot-password');
+  }
+
   const modeChangeHandler = () => {
     props.changeMode();
   };
@@ -81,6 +88,9 @@ const SignIn = (props) => {
                 />
               </Form.Group>
 
+              <div className="text-center mb-2">
+                <NavLink onClick={forgotPasswordHandler}>Forgot password?</NavLink>
+              </div>
               <div className="text-center">
                 <Button variant="primary" type="submit">
                   Login
