@@ -26,8 +26,8 @@ const ProfileDetails = () => {
         if (response.ok) {
           const data = await response.json();
           console.log(data);
-          nameRef.current.value = data.users[0].displayName;
-          photoUrlRef.current.value = data.users[0].photoUrl;
+          nameRef.current.value = data.users[0].displayName || '';
+          photoUrlRef.current.value = data.users[0].photoUrl || '';
         }
       } catch (err) {
         console.log(err);
