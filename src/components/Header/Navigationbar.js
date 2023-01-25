@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { Button, Nav, Navbar } from "react-bootstrap";
+import { Button, Container, Nav, Navbar } from "react-bootstrap";
 import AuthContext from "../../store/auth-context";
 
 const Navigationbar = () => {
@@ -22,7 +22,7 @@ const Navigationbar = () => {
           }
         );
         if (response.ok) {
-            console.log('mail sent!')
+          console.log("mail sent!");
           const data = await response.json();
           console.log(data);
         }
@@ -35,11 +35,18 @@ const Navigationbar = () => {
     verifyMail();
   };
 
+  const logoutHandler = () => {
+    authCtx.logout();
+  }
+
   return (
     <Navbar bg="dark">
-      <Button variant="danger" onClick={verifyMailHandler}>
+      <Button variant="outline-warning" onClick={verifyMailHandler}>
         Verify email
       </Button>
+      <Container>
+        <Button variant="danger" onClick={logoutHandler}>Logout</Button>
+      </Container>
     </Navbar>
   );
 };

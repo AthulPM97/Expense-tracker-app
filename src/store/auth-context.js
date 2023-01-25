@@ -24,6 +24,7 @@ export const AuthProvider = (props) => {
     };
 
     const logoutHandler = () => {
+        history.push('/login');
         setToken(() => {
             return '';
         });
