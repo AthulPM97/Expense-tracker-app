@@ -40,7 +40,10 @@ const Navigationbar = () => {
   }
 
   return (
-    <Navbar bg="dark">
+    <Navbar bg="dark" variant="dark">
+      <Nav className="me-auto">
+        <Nav.Link href="/daily-expenses">Daily Expenses</Nav.Link>
+      </Nav>
       <Button variant="outline-warning" onClick={verifyMailHandler}>
         Verify email
       </Button>

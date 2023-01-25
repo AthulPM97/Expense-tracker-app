@@ -6,6 +6,7 @@ import { useContext } from "react";
 import ProfileDetails from "./Pages/ProfileDetails";
 import Header from "./components/Header/Header";
 import ForgotPw from "./Pages/ForgotPw";
+import DailyExpenses from "./components/Expenses/DailyExpenses";
 
 function App() {
   const authCtx = useContext(AuthContext);
@@ -34,6 +35,11 @@ function App() {
           {authCtx.isLoggedIn && (
             <Route path="/update-details">
               <ProfileDetails />
+            </Route>
+          )}
+          {authCtx.isLoggedIn && (
+            <Route path="/daily-expenses">
+              <DailyExpenses/>
             </Route>
           )}
         </Switch>
