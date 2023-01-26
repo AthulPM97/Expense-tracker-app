@@ -3,31 +3,37 @@ import { Button, Container, Form } from "react-bootstrap";
 import ExpenseItem from "./ExpenseItem";
 
 const DailyExpenses = () => {
-
   const [expenses, setExpenses] = useState([]);
+  const [isEditing, setIsEditing] = useState(false);
 
   useEffect(() => {
     const getExpenseData = async () => {
-      try{
-        const response = await fetch('https://expense-tracker-26c78-default-rtdb.firebaseio.com/expenses.json');
-        if(response.ok) {
+      try {
+        const response = await fetch(
+          "https://expense-tracker-26c78-default-rtdb.firebaseio.com/expenses.json"
+        );
+        if (response.ok) {
           const data = await response.json();
-          const keys = Object.keys(data);
-          keys.forEach(key => {
-            const expenseWithId = {
-              ...data[key],
-              id: key,
-            }
-            setExpenses((expense) => {
-              return [...expense, expenseWithId];
+          if (data) {
+            const keys = Object.keys(data);
+            keys.forEach((key) => {
+              const expenseWithId = {
+                ...data[key],
+                id: key,
+              };
+              setExpenses((expenses) => {
+                return [...expenses, expenseWithId];
+              });
+              console.log(expenses);
             });
-            console.log(expenses);
-          });
+          } else {
+            setExpenses([]);
+          }
         }
-      }catch(err) {
+      } catch (err) {
         alert(err.message);
       }
-    }
+    };
     getExpenseData();
   }, []);
 
@@ -42,20 +48,22 @@ const DailyExpenses = () => {
     const enteredCategory = categoryRef.current.value;
 
     const postExpenseData = async () => {
-      try{
-        const response = await fetch('https://expense-tracker-26c78-default-rtdb.firebaseio.com/expenses.json',
-        {
-          method: "POST",
-          body: JSON.stringify({
-            amount: enteredAmount,
-            description: enteredDescription,
-            category: enteredCategory,
-          }),
-          headers: {
-            "Content-Type":"application/JSON",
+      try {
+        const response = await fetch(
+          "https://expense-tracker-26c78-default-rtdb.firebaseio.com/expenses.json",
+          {
+            method: "POST",
+            body: JSON.stringify({
+              amount: enteredAmount,
+              description: enteredDescription,
+              category: enteredCategory,
+            }),
+            headers: {
+              "Content-Type": "application/JSON",
+            },
           }
-        });
-        if(response.ok) {
+        );
+        if (response.ok) {
           const data = await response.json();
           console.log(data);
           const expenseData = {
@@ -68,18 +76,67 @@ const DailyExpenses = () => {
             return [...expenses, expenseData];
           });
         }
-      }catch(err) {
+      } catch (err) {
         alert(err.message);
       }
-    }
+    };
     postExpenseData();
-    
   };
+  const [editItemId, setEditItemId] = useState("");
+  const editHandler = (item) => {
+    console.log(item);
+    setEditItemId(item.id);
+    //prefill boxes
+    amountRef.current.value = item.amount;
+    descriptionRef.current.value = item.description;
+    categoryRef.current.value = item.category;
+    //set editing mode
+    setIsEditing(true);
+  };
+  console.log(editItemId);
+  const editedExpenseSubmitHandler = () => {
+    const editedAmount = amountRef.current.value;
+    const editedDescription = descriptionRef.current.value;
+    const editedCategory = categoryRef.current.value;
+
+    const putExpense = async () => {
+      try {
+        const response = await fetch(
+          `https://expense-tracker-26c78-default-rtdb.firebaseio.com/expenses/${editItemId}.json`,
+          {
+            method: "PUT",
+            body: JSON.stringify({
+              amount: editedAmount,
+              description: editedDescription,
+              category: editedCategory,
+            }),
+            headers: {
+              "Content-Type": "application/JSON",
+            },
+          }
+        );
+        if (response.ok) {
+          const data = response.json();
+          console.log(data);
+          console.log("updated!");
+          setIsEditing(false);
+          amountRef.current.value = "";
+          descriptionRef.current.value = "";
+          categoryRef.current.value = "";
+        }
+      } catch (err) {
+        console.log(err.message);
+      }
+    };
+    putExpense();
+  };
+
+  console.log(expenses);
   const addedExpenses = expenses.map((expense) => {
     console.log(expense);
     return (
       <Container className="mt-3 mb-3 border" key={expense.id}>
-        <ExpenseItem expense={expense} />
+        <ExpenseItem expense={expense} onEdit={editHandler} />
       </Container>
     );
   });
@@ -108,9 +165,16 @@ const DailyExpenses = () => {
               <option value="salary">Salary</option>
             </Form.Select>
           </Form.Group>
-          <Button type="submit" variant="primary" className="mb-3">
-            Add Expense
-          </Button>
+          {!isEditing && (
+            <Button type="submit" variant="primary" className="mb-3">
+              Add Expense
+            </Button>
+          )}
+          {isEditing && (
+            <Button variant="primary" onClick={editedExpenseSubmitHandler}>
+              Submit
+            </Button>
+          )}
         </Form>
       </Container>
       {addedExpenses}
