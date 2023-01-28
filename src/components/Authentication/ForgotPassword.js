@@ -3,15 +3,22 @@ import { Button, Col, Container, Form, Row } from "react-bootstrap";
 import { useHistory } from "react-router-dom";
 
 const ForgotPassword = () => {
-    const history = useHistory();
+  //history
+  const history = useHistory();
+
+  //refs
   const emailRef = useRef();
+
+  //states
   const [isLoading, setIsLoading] = useState(false);
 
+  //handlers
   const submitHandler = (event) => {
     event.preventDefault();
     const enteredEmail = emailRef.current.value;
     setIsLoading(true);
-
+    
+    //reset password api call
     const resetEmail = async () => {
       try {
         const response = await fetch(
@@ -25,14 +32,13 @@ const ForgotPassword = () => {
           }
         );
         if (response.ok) {
-            console.log("Reset mail sent");
           setIsLoading(false);
           const data = await response.json();
-          console.log(data);
-          history.push('/login');
+          alert(`Reset mail sent to ${data.email}`);
+          history.push("/login");
         }
       } catch (err) {
-        alert(err.message);
+        alert("Error resetting password: " + err.message);
       }
     };
     resetEmail();

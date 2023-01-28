@@ -1,21 +1,26 @@
-import { useContext, useRef } from "react";
+import { useRef } from "react";
 import { Button, Container, Form, Col, Row, NavLink } from "react-bootstrap";
-import AuthContext from "../../store/auth-context";
+import { useDispatch } from "react-redux";
+import { authActions } from "../../store/auth";
 
 const Signup = (props) => {
-  
-  const authCtx = useContext(AuthContext);
+  //store
+  const dispatch = useDispatch();
 
+  //refs
   const emailRef = useRef();
   const passwordRef = useRef();
   const confirmPasswordRef = useRef();
 
+  //handlers
   const submitHandler = (event) => {
-    console.log("submitted");
     event.preventDefault();
+    //user input
     const enteredEmail = emailRef.current.value;
     const enteredPassword = passwordRef.current.value;
     const confirmPassword = confirmPasswordRef.current.value;
+
+    //input validation
     if (!enteredEmail.includes("@")) {
       alert("Enter a valid Email");
     }
@@ -26,6 +31,7 @@ const Signup = (props) => {
       alert("Passwords do not match!");
     }
 
+    //signup api call
     const signUp = async () => {
       try {
         const response = await fetch(
@@ -44,13 +50,15 @@ const Signup = (props) => {
         );
         if (response.ok) {
           const data = await response.json();
-          console.log(data);
-          authCtx.login(data.idToken);
-          //localStorage.setItem("token", JSON.stringify(data.idToken));
+          dispatch(
+            authActions.login({ token: data.idToken, email: data.email })
+          );
+          localStorage.setItem('token', data.idToken);
+          localStorage.setItem('email', data.email);
           console.log("User has successfully signed up");
         }
       } catch (err) {
-        alert("Error: " + err.message);
+        alert("Error signing up: " + err.message);
       }
     };
 
@@ -60,7 +68,8 @@ const Signup = (props) => {
   const modeChangeHandler = () => {
     props.changeMode();
   };
-  
+
+  //jsx
   return (
     <Container
       className="d-flex align-items-center justify-content-center"
@@ -105,7 +114,11 @@ const Signup = (props) => {
             </Form>
           </div>
         </Col>
-        <Container className="text-center"><NavLink onClick={modeChangeHandler}>already have an account? Sign In</NavLink></Container>
+        <Container className="text-center">
+          <NavLink onClick={modeChangeHandler}>
+            already have an account? Sign In
+          </NavLink>
+        </Container>
       </Row>
     </Container>
   );

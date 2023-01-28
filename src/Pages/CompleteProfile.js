@@ -2,6 +2,7 @@ import { Col, Container, Row } from "react-bootstrap";
 import { NavLink } from "react-router-dom";
 
 const CompleteProfile = () => {
+
   return (
     <Container className="container-fluid ">
       <Row className="mt-3">

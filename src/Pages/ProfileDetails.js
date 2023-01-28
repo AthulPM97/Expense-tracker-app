@@ -1,14 +1,18 @@
-import { useContext, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { Button, Container, Form } from "react-bootstrap";
-import AuthContext from "../store/auth-context";
+import { useSelector } from "react-redux";
 
 const ProfileDetails = () => {
-  const authCtx = useContext(AuthContext);
+  //store
+  const token = useSelector((state) => state.auth.idToken);
 
+  //refs
   const nameRef = useRef();
   const photoUrlRef = useRef();
 
+  //side effects
   useEffect(() => {
+    //get stored details
     const getDetails = async () => {
       try {
         const response = await fetch(
@@ -16,7 +20,7 @@ const ProfileDetails = () => {
           {
             method: "POST",
             body: JSON.stringify({
-              idToken: authCtx.token,
+              idToken: token,
             }),
             headers: {
               "Content-Type": "application/JSON",
@@ -26,21 +30,23 @@ const ProfileDetails = () => {
         if (response.ok) {
           const data = await response.json();
           console.log(data);
-          nameRef.current.value = data.users[0].displayName || '';
-          photoUrlRef.current.value = data.users[0].photoUrl || '';
+          nameRef.current.value = data.users[0].displayName || "";
+          photoUrlRef.current.value = data.users[0].photoUrl || "";
         }
       } catch (err) {
-        console.log(err);
+        alert("Error fetching user details: " + err.message);
       }
     };
     getDetails();
   }, []);
 
+  //handlers
   const submitHandler = (event) => {
     event.preventDefault();
     const enteredName = nameRef.current.value;
     const enteredPhotoUrl = photoUrlRef.current.value;
 
+    //update user details api call
     const updateDetails = async () => {
       try {
         const response = await fetch(
@@ -48,7 +54,7 @@ const ProfileDetails = () => {
           {
             method: "POST",
             body: JSON.stringify({
-              idToken: authCtx.token,
+              idToken: token,
               displayName: enteredName,
               photoUrl: enteredPhotoUrl,
               returnSecureToken: true,
@@ -56,12 +62,12 @@ const ProfileDetails = () => {
           }
         );
         if (response.ok) {
-          console.log("Updated user details");
+          console.log("User details updated");
           const data = await response.json();
           console.log(data);
         }
       } catch (err) {
-        console.log(err);
+        alert("Error updating user details: " + err.message);
       }
     };
     updateDetails();

@@ -3,8 +3,10 @@ import SignIn from "../components/Authentication/SignIn";
 import { useState } from "react";
 
 const SignUpPage = () => {
+  //states
   const [isloginMode, setIsLoginMode] = useState(false);
 
+  //handlers
   const modeChangeHandler = () => {
     setIsLoginMode(mode => !mode);
   };

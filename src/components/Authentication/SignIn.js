@@ -1,27 +1,35 @@
-import { useContext, useRef } from "react";
+import { useRef } from "react";
 import { Col, Container, Row, Form, Button, NavLink } from "react-bootstrap";
 import { useHistory } from "react-router-dom";
-import AuthContext from "../../store/auth-context";
+import { useDispatch } from "react-redux";
+import { authActions } from "../../store/auth";
 
 const SignIn = (props) => {
-
+  //history
   const history = useHistory();
 
-  const authCtx = useContext(AuthContext);
-
+  //refs
   const emailRef = useRef();
   const passwordRef = useRef();
 
-  const submitHandler = (event) => {
+  //store
+  const dispatch = useDispatch();
+
+  //handlers
+  const loginHandler = (event) => {
     event.preventDefault();
     const enteredEmail = emailRef.current.value;
     const enteredPassword = passwordRef.current.value;
+    
+    //validation
     if (!enteredEmail.includes("@")) {
       alert("Enter a valid Email");
     }
     if (enteredPassword.length < 6) {
       alert("Enter a valid password");
     }
+
+    //login api call
     const signIn = async () => {
       try {
         const response = await fetch(
@@ -40,21 +48,24 @@ const SignIn = (props) => {
         );
         if (response.ok) {
           const data = await response.json();
-          console.log(data);
-          authCtx.login(data.idToken);
+          dispatch(authActions.login({token: data.idToken, email: data.email}));
+          history.push('/complete-profile');
+          localStorage.setItem('token', data.idToken);
+          localStorage.setItem('email', data.email);
+
           console.log("User has successfully signed in");
         }
       } catch (err) {
-        alert("Error: " + err.message);
+        alert("Error signing in: " + err.message);
       }
     };
 
     signIn();
-  }
+  };
 
   const forgotPasswordHandler = () => {
-    history.push('/forgot-password');
-  }
+    history.push("/forgot-password");
+  };
 
   const modeChangeHandler = () => {
     props.changeMode();
@@ -71,7 +82,7 @@ const SignIn = (props) => {
             <div className="text-center mb-3">
               <h3>Login</h3>
             </div>
-            <Form onSubmit={submitHandler}>
+            <Form onSubmit={loginHandler}>
               <Form.Group controlId="email" className="mb-2">
                 <Form.Control
                   type="email"
@@ -89,7 +100,9 @@ const SignIn = (props) => {
               </Form.Group>
 
               <div className="text-center mb-2">
-                <NavLink onClick={forgotPasswordHandler}>Forgot password?</NavLink>
+                <NavLink onClick={forgotPasswordHandler}>
+                  Forgot password?
+                </NavLink>
               </div>
               <div className="text-center">
                 <Button variant="primary" type="submit">
@@ -99,7 +112,11 @@ const SignIn = (props) => {
             </Form>
           </div>
         </Col>
-        <Container className="text-center"><NavLink onClick={modeChangeHandler}>Don't have an account? Sign Up</NavLink></Container>
+        <Container className="text-center">
+          <NavLink onClick={modeChangeHandler}>
+            Don't have an account? Sign Up
+          </NavLink>
+        </Container>
       </Row>
     </Container>
   );

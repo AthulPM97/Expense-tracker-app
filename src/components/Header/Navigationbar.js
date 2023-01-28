@@ -1,10 +1,18 @@
-import { useContext } from "react";
 import { Button, Container, Nav, Navbar } from "react-bootstrap";
-import AuthContext from "../../store/auth-context";
+import { useDispatch, useSelector } from "react-redux";
+import { useHistory } from "react-router-dom";
+import { authActions } from "../../store/auth";
 
 const Navigationbar = () => {
-  const authCtx = useContext(AuthContext);
 
+  //history
+  const history = useHistory();
+
+  //store
+  const dispatch = useDispatch();
+  const token = useSelector((state) => state.auth.token);
+
+  //handlers
   const verifyMailHandler = () => {
     const verifyMail = async () => {
       try {
@@ -14,7 +22,7 @@ const Navigationbar = () => {
             method: "POST",
             body: JSON.stringify({
               requestType: "VERIFY_EMAIL",
-              idToken: authCtx.token,
+              idToken: token,
             }),
             headers: {
               "Content-Type": "application/JSON",
@@ -22,8 +30,8 @@ const Navigationbar = () => {
           }
         );
         if (response.ok) {
-          console.log("mail sent!");
           const data = await response.json();
+          alert(`verification mail sent to ${data.email}`);
           console.log(data);
         }
       } catch (err) {
@@ -36,8 +44,9 @@ const Navigationbar = () => {
   };
 
   const logoutHandler = () => {
-    authCtx.logout();
-  }
+    dispatch(authActions.logout());
+    history.push('/login')
+  };
 
   return (
     <Navbar bg="dark" variant="dark">
@@ -48,7 +57,9 @@ const Navigationbar = () => {
         Verify email
       </Button>
       <Container>
-        <Button variant="danger" onClick={logoutHandler}>Logout</Button>
+        <Button variant="danger" onClick={logoutHandler}>
+          Logout
+        </Button>
       </Container>
     </Navbar>
   );
