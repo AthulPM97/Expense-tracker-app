@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 
 const ProfileDetails = () => {
   //store
-  const token = useSelector((state) => state.auth.idToken);
+  const token = useSelector((state) => state.auth.token);
 
   //refs
   const nameRef = useRef();

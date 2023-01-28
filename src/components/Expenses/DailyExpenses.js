@@ -1,13 +1,22 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Button, Container, Form } from "react-bootstrap";
+import { useDispatch, useSelector } from "react-redux";
+import { expensesActions } from "../../store/expenses";
 import ExpenseItem from "./ExpenseItem";
 
 const DailyExpenses = () => {
-  const [expenses, setExpenses] = useState([]);
-  const [isEditing, setIsEditing] = useState(false);
+  //store
+  const expenses = useSelector((state) => state.expenses.expenses);
+  console.log(expenses);
+  const dispatch = useDispatch();
 
+  //states
+  const [isEditing, setIsEditing] = useState(false);
+  const [editItemId, setEditItemId] = useState("");
+
+  //side effects
   useEffect(() => {
-    const getExpenseData = async () => {
+    const getExpenses = async () => {
       try {
         const response = await fetch(
           "https://expense-tracker-26c78-default-rtdb.firebaseio.com/expenses.json"
@@ -21,32 +30,33 @@ const DailyExpenses = () => {
                 ...data[key],
                 id: key,
               };
-              setExpenses((expenses) => {
-                return [...expenses, expenseWithId];
-              });
-              console.log(expenses);
+              dispatch(expensesActions.fetchExpenses(expenseWithId));
             });
           } else {
-            setExpenses([]);
+            dispatch(expensesActions.emptyExpenses());
           }
         }
       } catch (err) {
-        alert(err.message);
+        alert("Error fetching expenses: " + err.message);
       }
     };
-    getExpenseData();
+    getExpenses();
   }, []);
 
+  //refs
   const amountRef = useRef();
   const descriptionRef = useRef();
   const categoryRef = useRef();
 
+  //handlers
   const addExpenseHandler = (event) => {
     event.preventDefault();
     const enteredAmount = amountRef.current.value;
     const enteredDescription = descriptionRef.current.value;
     const enteredCategory = categoryRef.current.value;
+    console.log(enteredCategory);
 
+    //add expense api caller
     const postExpenseData = async () => {
       try {
         const response = await fetch(
@@ -65,24 +75,22 @@ const DailyExpenses = () => {
         );
         if (response.ok) {
           const data = await response.json();
-          console.log(data);
           const expenseData = {
             id: data.name,
             amount: enteredAmount,
             description: enteredDescription,
             category: enteredCategory,
           };
-          setExpenses(() => {
-            return [...expenses, expenseData];
-          });
+          dispatch(expensesActions.addExpense(expenseData));
         }
       } catch (err) {
-        alert(err.message);
+        alert("Error adding expense: " + err.message);
       }
     };
     postExpenseData();
   };
-  const [editItemId, setEditItemId] = useState("");
+
+  //event on edit btn click
   const editHandler = (item) => {
     console.log(item);
     setEditItemId(item.id);
@@ -93,7 +101,7 @@ const DailyExpenses = () => {
     //set editing mode
     setIsEditing(true);
   };
-  console.log(editItemId);
+  //event on submit btn click
   const editedExpenseSubmitHandler = () => {
     const editedAmount = amountRef.current.value;
     const editedDescription = descriptionRef.current.value;
@@ -116,24 +124,19 @@ const DailyExpenses = () => {
           }
         );
         if (response.ok) {
-          const data = response.json();
-          console.log(data);
-          console.log("updated!");
           setIsEditing(false);
           amountRef.current.value = "";
           descriptionRef.current.value = "";
-          categoryRef.current.value = "";
+          categoryRef.current.value = "Select category";
         }
       } catch (err) {
-        console.log(err.message);
+        alert("Error editing expense: " + err.message);
       }
     };
     putExpense();
   };
 
-  console.log(expenses);
   const addedExpenses = expenses.map((expense) => {
-    console.log(expense);
     return (
       <Container className="mt-3 mb-3 border" key={expense.id}>
         <ExpenseItem expense={expense} onEdit={editHandler} />
