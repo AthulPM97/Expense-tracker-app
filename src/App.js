@@ -1,6 +1,7 @@
 import { Redirect, Route, Switch } from "react-router-dom";
 import { useSelector } from "react-redux";
 
+import './App.css';
 import SignUpPage from "./Pages/SignUpPage";
 import CompleteProfile from "./Pages/CompleteProfile";
 import ProfileDetails from "./Pages/ProfileDetails";
@@ -9,10 +10,13 @@ import ForgotPw from "./Pages/ForgotPw";
 import DailyExpenses from "./components/Expenses/DailyExpenses";
 
 function App() {
+  //store
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
+  const theme = useSelector(state => state.theme.theme);
 
+  const themeClass = theme === 'light'? 'light-theme' : 'dark-theme';
   return (
-    <div>
+    <div className={themeClass}>
       {isLoggedIn && <Header />}
       <Switch>
         <Route path="/" exact>

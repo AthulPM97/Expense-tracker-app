@@ -10,7 +10,6 @@ const DailyExpenses = () => {
   const premiumEligible = useSelector(
     (state) => state.expenses.premiumEligible
   );
-  console.log(premiumEligible);
   const dispatch = useDispatch();
 
   //states
@@ -151,6 +150,19 @@ const DailyExpenses = () => {
     putExpense();
   };
 
+  //download csv
+  const makeCsv = (arr) => {
+    const expensesArray = [
+      ['Description','Amount','Category'],
+      ...arr.map((item)=>[item.description, item.category, item.amount])
+    ].map(expense => expense.join(',')).join('\n');
+
+    return expensesArray;
+  };
+  const expenseBlob = new Blob([makeCsv(expenses)], {type: 'text/plain'})
+  const downloadHref = URL.createObjectURL(expenseBlob)
+
+  //expense items
   const addedExpenses = expenses.map((expense) => {
     return (
       <Container className="mt-3 mb-3 border" key={expense.id}>
@@ -193,6 +205,7 @@ const DailyExpenses = () => {
               Submit
             </Button>
           )}
+        {premiumEligible &&<Button variant='warning' className="float-end" href={downloadHref}>Download expenses</Button>}
         </Form>
       </Container>
       {addedExpenses}

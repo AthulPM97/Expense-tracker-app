@@ -2,6 +2,7 @@ import { Button, Container, Nav, Navbar } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
 import { authActions } from "../../store/auth";
+import { themeActions } from "../../store/theme";
 
 const Navigationbar = () => {
 
@@ -12,7 +13,7 @@ const Navigationbar = () => {
   const dispatch = useDispatch();
   const token = useSelector((state) => state.auth.token);
   const premiumEligible = useSelector(state => state.expenses.premiumEligible);
-  console.log(premiumEligible);
+  const theme = useSelector(state => state.theme.theme);
 
   //handlers
   const verifyMailHandler = () => {
@@ -45,6 +46,10 @@ const Navigationbar = () => {
     verifyMail();
   };
 
+  const activatePremiumHandler = () => {
+    dispatch(themeActions.switchTheme());
+  }
+
   const logoutHandler = () => {
     dispatch(authActions.logout());
     history.push('/login')
@@ -55,7 +60,7 @@ const Navigationbar = () => {
       <Nav className="me-auto">
         <Nav.Link href="/daily-expenses">Daily Expenses</Nav.Link>
       </Nav>
-      {premiumEligible && <Button variant="outline-success" >Activate Premium</Button>}
+      {premiumEligible && <Button variant="outline-success" onClick={activatePremiumHandler}>Activate Premium</Button>}
       <Button variant="outline-warning" onClick={verifyMailHandler}>
         Verify email
       </Button>
