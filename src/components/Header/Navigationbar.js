@@ -11,6 +11,8 @@ const Navigationbar = () => {
   //store
   const dispatch = useDispatch();
   const token = useSelector((state) => state.auth.token);
+  const premiumEligible = useSelector(state => state.expenses.premiumEligible);
+  console.log(premiumEligible);
 
   //handlers
   const verifyMailHandler = () => {
@@ -53,6 +55,7 @@ const Navigationbar = () => {
       <Nav className="me-auto">
         <Nav.Link href="/daily-expenses">Daily Expenses</Nav.Link>
       </Nav>
+      {premiumEligible && <Button variant="outline-success" >Activate Premium</Button>}
       <Button variant="outline-warning" onClick={verifyMailHandler}>
         Verify email
       </Button>

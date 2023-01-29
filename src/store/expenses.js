@@ -2,6 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialExpensesState = {
   expenses: [],
+  premiumEligible: false,
 };
 
 const expensesSlice = createSlice({
@@ -21,7 +22,10 @@ const expensesSlice = createSlice({
     },
     emptyExpenses(state) {
       state.expenses = [];
-    }
+    },
+    eligibleForPremium(state) {
+      state.premiumEligible = true;
+    },
   },
 });
 

@@ -7,7 +7,10 @@ import ExpenseItem from "./ExpenseItem";
 const DailyExpenses = () => {
   //store
   const expenses = useSelector((state) => state.expenses.expenses);
-  console.log(expenses);
+  const premiumEligible = useSelector(
+    (state) => state.expenses.premiumEligible
+  );
+  console.log(premiumEligible);
   const dispatch = useDispatch();
 
   //states
@@ -42,6 +45,18 @@ const DailyExpenses = () => {
     };
     getExpenses();
   }, []);
+
+  useEffect(() => {
+    const checkEligible = () => {
+      const totalAmount = expenses.reduce((total, expense) => {
+        return total + parseInt(expense.amount);
+      }, 0);
+      if(totalAmount > 10000) {
+        dispatch(expensesActions.eligibleForPremium());
+      }
+    };
+    checkEligible();
+  }, [expenses]);
 
   //refs
   const amountRef = useRef();
