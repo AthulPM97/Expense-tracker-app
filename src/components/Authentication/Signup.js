@@ -54,7 +54,7 @@ const Signup = (props) => {
             authActions.login({ token: data.idToken, email: data.email })
           );
           localStorage.setItem('token', data.idToken);
-          localStorage.setItem('email', data.email);
+          localStorage.setItem('uid', data.localId);
           console.log("User has successfully signed up");
         }
       } catch (err) {

@@ -51,7 +51,7 @@ const SignIn = (props) => {
           dispatch(authActions.login({token: data.idToken, email: data.email}));
           history.push('/complete-profile');
           localStorage.setItem('token', data.idToken);
-          localStorage.setItem('email', data.email);
+          localStorage.setItem('uid', data.localId);
 
           console.log("User has successfully signed in");
         }

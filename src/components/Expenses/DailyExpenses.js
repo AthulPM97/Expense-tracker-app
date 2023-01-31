@@ -11,6 +11,7 @@ const DailyExpenses = () => {
     (state) => state.expenses.premiumEligible
   );
   const dispatch = useDispatch();
+  const userID = useSelector(state => state.auth.userID);
 
   //states
   const [isEditing, setIsEditing] = useState(false);
@@ -21,7 +22,7 @@ const DailyExpenses = () => {
     const getExpenses = async () => {
       try {
         const response = await fetch(
-          "https://expense-tracker-26c78-default-rtdb.firebaseio.com/expenses.json"
+          `https://expense-tracker-26c78-default-rtdb.firebaseio.com/expenses/${userID}.json`
         );
         if (response.ok) {
           const data = await response.json();
@@ -51,7 +52,9 @@ const DailyExpenses = () => {
         return total + parseInt(expense.amount);
       }, 0);
       if(totalAmount > 10000) {
-        dispatch(expensesActions.eligibleForPremium());
+        dispatch(expensesActions.eligibleForPremium(true));
+      } else {
+        dispatch(expensesActions.eligibleForPremium(false));
       }
     };
     checkEligible();
@@ -74,7 +77,7 @@ const DailyExpenses = () => {
     const postExpenseData = async () => {
       try {
         const response = await fetch(
-          "https://expense-tracker-26c78-default-rtdb.firebaseio.com/expenses.json",
+          `https://expense-tracker-26c78-default-rtdb.firebaseio.com/expenses/${userID}.json`,
           {
             method: "POST",
             body: JSON.stringify({
@@ -124,7 +127,7 @@ const DailyExpenses = () => {
     const putExpense = async () => {
       try {
         const response = await fetch(
-          `https://expense-tracker-26c78-default-rtdb.firebaseio.com/expenses/${editItemId}.json`,
+          `https://expense-tracker-26c78-default-rtdb.firebaseio.com/expenses/${userID}/${editItemId}.json`,
           {
             method: "PUT",
             body: JSON.stringify({

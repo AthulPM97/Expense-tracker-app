@@ -1,18 +1,18 @@
 import { Button, Col, Container, Row } from "react-bootstrap";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { expensesActions } from "../../store/expenses";
 
 const ExpenseItem = (props) => {
-
   //store
   const dispatch = useDispatch();
+  const userID = useSelector(state => state.auth.userID);
 
   //handlers
   const deleteItemHandler = (id) => {
     const deleteData = async () => {
       try {
         const response = await fetch(
-          `https://expense-tracker-26c78-default-rtdb.firebaseio.com/expenses/${id}.json`,
+          `https://expense-tracker-26c78-default-rtdb.firebaseio.com/expenses/${userID}/${id}.json`,
           {
             method: "DELETE",
             headers: {

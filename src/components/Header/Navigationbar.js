@@ -5,15 +5,15 @@ import { authActions } from "../../store/auth";
 import { themeActions } from "../../store/theme";
 
 const Navigationbar = () => {
-
   //history
   const history = useHistory();
 
   //store
   const dispatch = useDispatch();
   const token = useSelector((state) => state.auth.token);
-  const premiumEligible = useSelector(state => state.expenses.premiumEligible);
-  const theme = useSelector(state => state.theme.theme);
+  const premiumEligible = useSelector(
+    (state) => state.expenses.premiumEligible
+  );
 
   //handlers
   const verifyMailHandler = () => {
@@ -42,33 +42,42 @@ const Navigationbar = () => {
         alert(err.message);
       }
     };
-
     verifyMail();
   };
 
   const activatePremiumHandler = () => {
     dispatch(themeActions.switchTheme());
-  }
+  };
 
   const logoutHandler = () => {
     dispatch(authActions.logout());
-    history.push('/login')
+    history.push("/login");
   };
 
   return (
-    <Navbar bg="dark" variant="dark">
-      <Nav className="me-auto">
-        <Nav.Link href="/daily-expenses">Daily Expenses</Nav.Link>
-      </Nav>
-      {premiumEligible && <Button variant="outline-success" onClick={activatePremiumHandler}>Activate Premium</Button>}
+    <Navbar bg="dark" variant="dark" expand="lg">
+      {premiumEligible && (
+        <Button variant="outline-success" onClick={activatePremiumHandler}>
+          Activate Premium
+        </Button>
+      )}
       <Button variant="outline-warning" onClick={verifyMailHandler}>
         Verify email
       </Button>
-      <Container>
-        <Button variant="danger" onClick={logoutHandler}>
-          Logout
-        </Button>
-      </Container>
+      <Navbar.Collapse>
+        <Nav className="mr-auto">
+          <Nav.Link href="/daily-expenses">Daily Expenses</Nav.Link>
+        </Nav>
+        <Container>
+          <Button
+            variant="danger"
+            className="float-end"
+            onClick={logoutHandler}
+          >
+            Logout
+          </Button>
+        </Container>
+      </Navbar.Collapse>
     </Navbar>
   );
 };

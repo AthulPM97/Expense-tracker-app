@@ -23,8 +23,8 @@ const expensesSlice = createSlice({
     emptyExpenses(state) {
       state.expenses = [];
     },
-    eligibleForPremium(state) {
-      state.premiumEligible = true;
+    eligibleForPremium(state,action) {
+      state.premiumEligible = action.payload;
     },
   },
 });
