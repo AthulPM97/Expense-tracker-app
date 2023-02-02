@@ -24,5 +24,16 @@ describe('forgot password page', () => {
         //Assert
         const loadingElement = screen.getByText('Loading...', {exact: false});
         expect(loadingElement).toBeInTheDocument();
-    })
+    });
+    test('does not render "loading" when "send link" button is not clicked', () => {
+        //Arrange
+        render(<ForgotPassword/>);
+
+        //Act
+        const buttonElement = screen.getByRole('button');
+
+        //Assert
+        const loadingElement = screen.queryByText('Loading...', {exact: false});
+        expect(loadingElement).toBeNull();
+    });
 });
