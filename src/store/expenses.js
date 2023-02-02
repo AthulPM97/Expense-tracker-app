@@ -20,6 +20,12 @@ const expensesSlice = createSlice({
     fetchExpenses(state,action) {
       state.expenses = [...state.expenses, action.payload];
     },
+    editExpense(state,action) {
+      const existingExpense = state.expenses.find((expense) => expense.id === action.payload.id);
+      existingExpense.amount = action.payload.amount;
+      existingExpense.category = action.payload.category;
+      existingExpense.description = action.payload.description;
+    },
     emptyExpenses(state) {
       state.expenses = [];
     },

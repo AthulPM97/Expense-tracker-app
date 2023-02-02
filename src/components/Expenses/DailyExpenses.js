@@ -7,6 +7,7 @@ import ExpenseItem from "./ExpenseItem";
 const DailyExpenses = () => {
   //store
   const expenses = useSelector((state) => state.expenses.expenses);
+  console.log(expenses);
   const premiumEligible = useSelector(
     (state) => state.expenses.premiumEligible
   );
@@ -109,7 +110,6 @@ const DailyExpenses = () => {
 
   //event on edit btn click
   const editHandler = (item) => {
-    console.log(item);
     setEditItemId(item.id);
     //prefill boxes
     amountRef.current.value = item.amount;
@@ -142,6 +142,9 @@ const DailyExpenses = () => {
         );
         if (response.ok) {
           setIsEditing(false);
+          const data = await response.json();
+          console.log(data);
+          dispatch(expensesActions.editExpense({...data, id: editItemId}));
           amountRef.current.value = "";
           descriptionRef.current.value = "";
           categoryRef.current.value = "Select category";
